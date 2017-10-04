@@ -1,0 +1,22 @@
+BackendBundle\Entity\Modulo:
+    type: entity
+    table: modulo
+    id:
+        idModulo:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: id_modulo
+            generator:
+                strategy: IDENTITY
+    fields:
+        descripModulo:
+            type: string
+            nullable: false
+            length: 150
+            options:
+                fixed: false
+            column: descrip_modulo
+    lifecycleCallbacks: {  }

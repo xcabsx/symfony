@@ -1,0 +1,41 @@
+BackendBundle\Entity\UsuarioXPermiso:
+    type: entity
+    table: usuario_x_permiso
+    indexes:
+        usuario_x_permiso_users_Id_fk:
+            columns:
+                - id_usuario
+        usuario_x_permiso_permisos_id_permiso_fk:
+            columns:
+                - id_permiso
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    manyToOne:
+        idPermiso:
+            targetEntity: Permisos
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                id_permiso:
+                    referencedColumnName: id_permiso
+            orphanRemoval: false
+        idUsuario:
+            targetEntity: Users
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                id_usuario:
+                    referencedColumnName: Id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

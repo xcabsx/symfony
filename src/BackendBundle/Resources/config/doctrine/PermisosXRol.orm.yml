@@ -1,0 +1,41 @@
+BackendBundle\Entity\PermisosXRol:
+    type: entity
+    table: permisos_x_rol
+    indexes:
+        permisos_x_rol_permisos_id_permiso_fk:
+            columns:
+                - id_permiso
+        permisos_x_rol_roles_rol_id_fk:
+            columns:
+                - id_rol
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    manyToOne:
+        idPermiso:
+            targetEntity: Permisos
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                id_permiso:
+                    referencedColumnName: id_permiso
+            orphanRemoval: false
+        idRol:
+            targetEntity: Roles
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                id_rol:
+                    referencedColumnName: rol_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

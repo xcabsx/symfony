@@ -1,0 +1,41 @@
+BackendBundle\Entity\RolesXUser:
+    type: entity
+    table: roles_x_user
+    indexes:
+        user_rol_users_Id_fk:
+            columns:
+                - userId
+        user_rol_roles_rol_id_fk:
+            columns:
+                - rolId
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    manyToOne:
+        rolid:
+            targetEntity: Roles
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                rolId:
+                    referencedColumnName: rol_id
+            orphanRemoval: false
+        userid:
+            targetEntity: User
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                userId:
+                    referencedColumnName: Id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,22 @@
+BackendBundle\Entity\Permisos:
+    type: entity
+    table: permisos
+    id:
+        idPermiso:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: id_permiso
+            generator:
+                strategy: IDENTITY
+    fields:
+        descripPermiso:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+            column: descrip_permiso
+    lifecycleCallbacks: {  }
