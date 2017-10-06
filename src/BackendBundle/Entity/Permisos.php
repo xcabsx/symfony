@@ -51,5 +51,10 @@ class Permisos
     {
         return $this->descripPermiso;
     }
+
+    /**
+     * @param int $idPermiso
+     */
+
 }
 

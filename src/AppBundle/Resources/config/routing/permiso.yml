@@ -1,0 +1,34 @@
+permiso_newP:
+    path: /newP
+    defaults: { _controller: "AppBundle:Permisos:newP"}
+    methods: POST
+
+permiso_edit:
+    path: /editP/{id}
+    defaults: { _controller: "AppBundle:Permisos:newP"}
+    methods: POST
+
+permiso_test:
+    path: /test
+    defaults: { _controller: "AppBundle:Permisos:pruebas"}
+    methods: POST
+
+permiso_newR:
+    path: /newR
+    defaults: { _controller: "AppBundle:Permisos:newR"}
+    methods: POST
+
+permiso_editR:
+    path: /editR/{id}
+    defaults: { _controller: "AppBundle:Permisos:newR"}
+    methods: POST
+
+permiso_newPxR:
+    path: /newPxR
+    defaults: { _controller: "AppBundle:Permisos:newPxR"}
+    methods: POST
+
+permiso_editPxR:
+    path: /editPxR/{id}
+    defaults: { _controller: "AppBundle:Permisos:newPxR"}
+    methods: POST

@@ -311,9 +311,7 @@ public function searchAction(Request $request, $search = null){
 			//set orden
 
 			$dql .=" ORDER BY t.id $order";
-			var_dump($filter);
-			var_dump($search);
-			var_dump($dql);
+
 
 			// create query
 			$query = $em->createQuery($dql);

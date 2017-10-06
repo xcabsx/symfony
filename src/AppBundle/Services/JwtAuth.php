@@ -1,6 +1,8 @@
 <?php
 namespace AppBundle\Services;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\DoctrineBundle\ManagerConfigurator;
 use Firebase\JWT\JWT;
 use Doctrine\ORM\Query;
 
@@ -15,25 +17,25 @@ class JwtAuth{
 	public function signup($email, $password, $getHash = null){
 		
 		$user = $this->manager->getRepository('BackendBundle:User')->findOneBy(array(
-				"email"=> $email,
-				"password"=>$password
+            'email' => $email,
+				'password' =>$password
 			));
 		$rolesXuser = $this->manager->getRepository('BackendBundle:RolesXUser')->findOneBy(array(
-				"userid"=> $user->getId()
+				'userid' => $user->getId()
 			));
 
 		$permisos = $this->manager->getRepository('BackendBundle:PermisosXRol')->findBy(array(
-				"idRol"=> $rolesXuser->getRolid()->getRolId()
+				'idRol' => $rolesXuser->getRolid()->getRolId()
 			));
 
 		//var_dump($rolesXuser->getRolid()->getDescRol()); //saco el rol;
 		//var_dump($rolesXuser->getUserid()->getEmail()); //saco el nombre
 		$accesos = array();
-		for($i = 0; $i < count($permisos); ++$i) {
-		    array_push($accesos, $permisos[$i]->getIdPermiso()->getDescripPermiso());
-		}// con esto saco los permisos.
 
-		
+
+        foreach ($permisos as $iValue) {
+            $accesos[] = $iValue->getIdPermiso()->getDescripPermiso();
+        }
 		//var_dump($accesos);
 		//$pepe1 = 'rolid:'.$roles->getRolid()->getRolId();
 		//$pepe = $permisos->getIdPermiso();
@@ -49,13 +51,13 @@ class JwtAuth{
 		if($signup == true){
 			//generar token
 			$token = array(
-				"sub" => $user->getId(),
-				"email" => $user->getEmail(),
-				"name"=> $user->getName(),
-				"surname" => $user->getSurname(),
-				"iat"=> time(),
-				"exp" =>time()+(7 * 24 * 60 * 60),
-				"Permisos"=>$accesos
+				'sub' => $user->getId(),
+				'email' => $user->getEmail(),
+				'name' => $user->getName(),
+				'surname' => $user->getSurname(),
+				'iat' => time(),
+				'exp' =>time()+(7 * 24 * 60 * 60),
+				'Permisos' =>$accesos
 
 
 				);
@@ -77,8 +79,8 @@ class JwtAuth{
 				);*/
 		}else{
 			$data= array(
-				"data"=>"fallo login",
-				"status"=>"error"
+				'data' => 'fallo login',
+				'status' => 'error'
 				);
 
 		}
@@ -89,6 +91,7 @@ class JwtAuth{
 
 	public function checkToken($jwt,$getIdentity = false){
 		$auth = false;
+		$decoded = '';
 
 		try{
 
