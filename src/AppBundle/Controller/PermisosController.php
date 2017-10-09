@@ -7,6 +7,8 @@ use AppBundle\Services\JwtAuth;
 use BackendBundle\Entity\Permisos;
 use BackendBundle\Entity\PermisosXRol;
 use BackendBundle\Entity\Roles;
+use BackendBundle\Entity\RolPermisoAplicacion;
+use BackendBundle\Entity\RolXUsuarioXAplicacion;
 use BackendBundle\Entity\User;
 use Doctrine\DBAL\Types\JsonArrayType;
 use Doctrine\DBAL\Types\ObjectType;
@@ -94,6 +96,7 @@ class PermisosController extends Controller
 
                 /**
                  * True si tiene acceso False si no @var boolean
+                 * Solo tendra acceso si tiene un permiso de Administrador
                 */
                 $tieneAcceso = false;
 
@@ -136,6 +139,9 @@ class PermisosController extends Controller
 
                         $permiso = new Permisos();
                         $permiso->setDescripPermiso($description);
+                        $permiso->setCreado($createdAt);
+                        $permiso->setUsuario($identity->sub);
+                        $permiso->setEstado('Activo');
 
                         $em->persist($permiso);
                         $em->flush();
@@ -260,6 +266,9 @@ class PermisosController extends Controller
 
                         $rol = new Roles();
                         $rol->setDescRol($description);
+                        $rol->setCreado($createdAt);
+                        $rol->setEstado('Activo');
+                        $rol->setUsuario($identity->sub);
 
                         $em->persist($rol);
                         $em->flush();
@@ -330,6 +339,11 @@ class PermisosController extends Controller
         return $helpers->json($data);
     }
 
+    /**
+     * @param Request $request
+     * @param null $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function newPxRAction(Request $request, $id = null){
 
 
@@ -399,6 +413,8 @@ class PermisosController extends Controller
                 $paramPermisoId = (isset($params->permid)) ? $params->permid: null;
                 /** @var string Parametro id de Rol */
                 $paramRolId = (isset($params->rolid)) ? $params->rolid: null;
+                /** @var string Parametro de id de aplicacion */
+                $aplicaionId = (isset($params->aplid)) ? $params->aplid: null;
 
                 /**
                  * Si tiene acceso se ejecuta el Alta o Modificacion.
@@ -411,15 +427,14 @@ class PermisosController extends Controller
                      * sino Error
                      */
 
-                    if($userId != null && $paramPermisoId != null && $paramRolId ){
+                    if($userId != null && $paramPermisoId != null && $paramRolId && $aplicaionId){
 
                         /** @var EntityManager Instancia el entity manager */
                         $em = $this->getDoctrine()->getManager();
 
-                        /**
-                         * Si @var $id == null Da de alta un nuevo permiso.
-                         * sino es una modicifacion.
-                         */
+                        $aplicacion = $em->getRepository('BackendBundle:Aplicacion')->findOneBy(array(
+                            "idapll"=>$aplicaionId
+                        ));
                         $permisos = $em->getRepository('BackendBundle:Permisos')->findOneBy(array(
                             "idPermiso"=> $paramPermisoId
                         ));
@@ -428,27 +443,263 @@ class PermisosController extends Controller
                         ));
                         $permisosXrol = new PermisosXRol();
 
+                        $rolXpermisoXapl = new RolPermisoAplicacion();
+
+
+                        /**
+                         * Si @var $id == null Da de alta un nuevo permiso.
+                         * sino es una modicifacion.
+                         */
                         if($id == null){
                             /** @var permisosXrol Crea nueva variable Para dar de Alta,
                              * agrega los IDs al objeto.
                              * graba el objeto
                              */
-                            $permisosXrol->setIdPermiso($permisos);
-                            $permisosXrol->setIdRol($roles);
+                           /* $permisosXrol->setIdPermiso($permisos);
+                            $permisosXrol->setIdRol($roles);*/
 
-                            $em->persist($permisosXrol);
-                            $em->flush();
+                            $rolXpermisoXapl->setIdaplicacion($aplicacion);
+                            $rolXpermisoXapl->setIdpermiso($permisos);
+                            $rolXpermisoXapl->setIdrol($roles);
+                            $rolXpermisoXapl->setFechaCreacion($createdAt);
+
+                            /** @var string Controla que los datos pasados esteen marcados como activos @todo Controlar que los 3 tengan estado activo, sino rcar con KO */
+                            $activo= 'OK';
+
+                            if($activo === 'OK') {
+                                $em->persist($rolXpermisoXapl);
+                                $em->flush();
+
+                                $data= array(
+                                    "status"=>"success",
+                                    "code"=>200,
+                                    "data"=>$rolXpermisoXapl
+                                );
+                            }else{
+                                $data= array(
+                                    "status"=>"Error",
+                                    "code"=>200,
+                                    "msg"=>'Permisos , roles o aplicaciones inactivas. no se puede dar de alta'
+                                );
+
+                            }
 
                             /** @var array Salida de la Api.
                              *code 200 cuando es correcta
                              *otros codigos depende los errores.
                              */
+
+                        }else{
+                            /*@todo arreglar para editar lo correcto*/
+                            $permisosXrol = $em->getRepository('BackendBundle:PermisosXRol')->findOneBy(array(
+                                "id"=> 7
+                            ));
+
+                            $permisosXrol->setIdRol($roles);
+                            $permisosXrol->setIdPermiso($permisos);
+
+                            $em->persist($permisosXrol);
+                            $em->flush();
+
                             $data= array(
-                                "status"=>"success",
+                                "status"=>"success updated",
                                 "code"=>200,
                                 "data"=>$permisosXrol
                             );
+                        }
+
+
+                    }else{
+                        $data= array(
+                            "status"=>"error",
+                            "code"=>400,
+                            "message"=>"permiso no creado,validation failed"
+                        );
+
+                    };
+                }else{
+                    $data= array(
+                        "status"=>"denegado",
+                        "code"=>200,
+                        "message"=>"no tiene privilegios suficientes para realizar la operacion."
+                    );
+
+                }
+
+
+            }else{
+
+                $data= array(
+                    "status"=>"error",
+                    "code"=>400,
+                    "message"=>"tarea no creada, error de parametro"
+                );
+
+
+            }
+
+
+
+        }else{
+
+            $data= array(
+                "status"=>"error",
+                "code"=>400,
+                "message"=>"autorization not valid"
+            );
+
+        }
+
+        return $helpers->json($data);
+    }
+
+    public function newRxUxAAction(Request $request, $id = null){
+
+
+        /**
+         * @var Service para convertir Objetos a JSON
+         */
+        $helpers = $this->get(Helpers::class);
+
+
+        /** @var JwtAuth Servicio para Login y Control de acceso */
+        $jwt_auth = $this->get(JwtAuth::class);
+
+
+        /** @var string Recupera token de peticion http  */
+        $token = $request->get('authorization',null);
+
+        /** @var boolean Resultado de Chequeo validez del token
+         * @return boolean
+         */
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if($authCheck){
+
+            /** @var ObjectType Recupera datos decriptados del token*/
+            $identity = $jwt_auth->checkToken($token,true);
+
+
+            /** @var string Recibe Datos del cuerpo de la peticion. */
+            $json = $request->get('json',null);
+
+
+            if($json != null){
+
+                /** @var Object convierte el parametro en un objeto.*/
+                $params = json_decode($json);
+
+
+
+                /** @var DateTime  fecha de creacion */
+                $createdAt = new \Datetime('now');
+                /** @var DateTime fecha de Modificacion */
+                $updatedAt = new \Datetime('now');
+
+                /**
+                 * @var string ID del usuario Logeado
+                 */
+                $userId = ($identity->sub!=null)? $identity->sub: null;
+                $useremail = ($identity->email);
+                /** @var array Array de persimos de usuario */
+                $userPermisos = $identity->Permisos;
+
+
+                /**
+                 * True si tiene acceso False si no @var boolean
+                 */
+                $tieneAcceso = false;
+
+
+                foreach ($userPermisos as $iValue) {
+                    if($iValue === "Administrador"){
+                        $tieneAcceso = true;
+                    }
+                }
+
+
+                /** @var string Parametro id de permiso */
+                $paramUserId = (isset($params->userid)) ? $params->userid: null;
+                /** @var string Parametro id de Rol */
+                $paramRolId = (isset($params->rolid)) ? $params->rolid: null;
+                /** @var string Parametro de id de aplicacion */
+                $aplicaionId = (isset($params->aplid)) ? $params->aplid: null;
+
+                /**
+                 * Si tiene acceso se ejecuta el Alta o Modificacion.
+                 * sino regresa un error.
+                 */
+                if($tieneAcceso){
+
+                    /**
+                     * Si existe $paramRolId y $paramUserId y $aplicationId  continua
+                     * sino Error
+                     */
+
+                    if($userId != null && $paramUserId != null && $paramRolId && $aplicaionId){
+
+                        /** @var EntityManager Instancia el entity manager */
+                        $em = $this->getDoctrine()->getManager();
+
+                        $aplicacion = $em->getRepository('BackendBundle:Aplicacion')->findOneBy(array(
+                            "idapll"=>$aplicaionId
+                        ));
+                        $usuarios = $em->getRepository('BackendBundle:Users')->findOneBy(array(
+                            "id"=> $userId
+                        ));
+                        $roles = $em->getRepository('BackendBundle:Roles')->findOneBy(array(
+                            "rolId"=> $paramRolId
+                        ));
+
+
+                        /** @var RolXUsuarioXAplicacion instancia el objeto a dar de alta o modificar */
+                        $rolXusuarioXapl = new RolXUsuarioXAplicacion();
+
+
+                        /**
+                         * Si @var $id == null Da de alta un nuevo permiso.
+                         * sino es una modicifacion.
+                         */
+                        if($id == null){
+                            /** @var permisosXrol Crea nueva variable Para dar de Alta,
+                             * agrega los IDs al objeto.
+                             * graba el objeto
+                             */
+
+                            $rolXusuarioXapl->setUserid($usuarios);
+                            $rolXusuarioXapl->setRolid($roles);
+                            $rolXusuarioXapl->setAplid($aplicacion);
+                            $rolXusuarioXapl->setEstado('Activo');
+                            $rolXusuarioXapl->setUsuario($userId);
+
+                            /** @var string Controla que los datos pasados esteen marcados como activos @todo Controlar que los 3 tengan estado activo, sino rcar con KO */
+                            $activo= 'OK';
+
+                            if($activo === 'OK') {
+                                $em->persist($rolXpermisoXapl);
+                                $em->flush();
+
+                                $data= array(
+                                    "status"=>"success",
+                                    "code"=>200,
+                                    "data"=>$rolXpermisoXapl
+                                );
+                            }else{
+                                $data= array(
+                                    "status"=>"Error",
+                                    "code"=>200,
+                                    "msg"=>'Permisos , roles o aplicaciones inactivas. no se puede dar de alta'
+                                );
+
+                            }
+
+                            /** @var array Salida de la Api.
+                             *code 200 cuando es correcta
+                             *otros codigos depende los errores.
+                             */
+
                         }else{
+                            /*@todo arreglar para editar lo correcto*/
                             $permisosXrol = $em->getRepository('BackendBundle:PermisosXRol')->findOneBy(array(
                                 "id"=> 7
                             ));

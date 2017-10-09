@@ -1,37 +1,31 @@
-BackendBundle\Entity\Permisos:
+BackendBundle\Entity\Aplicacion:
     type: entity
-    table: permisos
+    table: aplicacion
     id:
-        idPermiso:
+        idapll:
             type: integer
             nullable: false
             options:
                 unsigned: false
             id: true
-            column: id_permiso
             generator:
                 strategy: IDENTITY
     fields:
-        descripPermiso:
+        descripcionApl:
             type: string
             nullable: false
-            length: 255
-            options:
-                fixed: false
-            column: descrip_permiso
-        creado:
-            type: datetime
-            nullable: true
-        usuario:
-            type: string
-            nullable: true
             length: 250
             options:
                 fixed: false
+            column: descripcion_apl
+        fechaCreacion:
+            type: datetime
+            nullable: true
+            column: fecha_creacion
         estado:
             type: string
             nullable: true
-            length: 250
+            length: 10
             options:
                 fixed: false
     lifecycleCallbacks: {  }

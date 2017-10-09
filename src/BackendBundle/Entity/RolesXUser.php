@@ -18,7 +18,7 @@ class RolesXUser
     private $rolid;
 
     /**
-     * @var \BackendBundle\Entity\User
+     * @var \BackendBundle\Entity\Users
      */
     private $userid;
 
@@ -60,11 +60,11 @@ class RolesXUser
     /**
      * Set userid
      *
-     * @param \BackendBundle\Entity\User $userid
+     * @param \BackendBundle\Entity\Users $userid
      *
      * @return RolesXUser
      */
-    public function setUserid(\BackendBundle\Entity\User $userid = null)
+    public function setUserid(\BackendBundle\Entity\Users $userid = null)
     {
         $this->userid = $userid;
 
@@ -74,11 +74,10 @@ class RolesXUser
     /**
      * Get userid
      *
-     * @return \BackendBundle\Entity\User
+     * @return \BackendBundle\Entity\Users
      */
     public function getUserid()
     {
         return $this->userid;
     }
 }
-

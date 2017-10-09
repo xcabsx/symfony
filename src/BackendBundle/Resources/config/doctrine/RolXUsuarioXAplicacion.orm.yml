@@ -1,0 +1,73 @@
+BackendBundle\Entity\RolXUsuarioXAplicacion:
+    type: entity
+    table: rol_x_usuario_x_aplicacion
+    indexes:
+        rol_x_usuario_x_aplicacion_roles_rol_id_fk:
+            columns:
+                - rolid
+        rol_x_usuario_x_aplicacion_users_Id_fk:
+            columns:
+                - userid
+        rol_x_usuario_x_aplicacion_aplicacion_idapll_fk:
+            columns:
+                - aplid
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        fechaCreacion:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+            column: fecha_creacion
+        usuario:
+            type: string
+            nullable: true
+            length: 10
+            options:
+                fixed: false
+        estado:
+            type: string
+            nullable: false
+            length: 20
+            options:
+                fixed: false
+    manyToOne:
+        aplid:
+            targetEntity: Aplicacion
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                aplid:
+                    referencedColumnName: idapll
+            orphanRemoval: false
+        rolid:
+            targetEntity: Roles
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                rolid:
+                    referencedColumnName: rol_id
+            orphanRemoval: false
+        userid:
+            targetEntity: Users
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                userid:
+                    referencedColumnName: Id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

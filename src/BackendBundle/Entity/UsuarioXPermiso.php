@@ -81,4 +81,3 @@ class UsuarioXPermiso
         return $this->idUsuario;
     }
 }
-

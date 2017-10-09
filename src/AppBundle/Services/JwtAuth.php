@@ -16,26 +16,11 @@ class JwtAuth{
 
 	public function signup($email, $password, $getHash = null){
 		
-		$user = $this->manager->getRepository('BackendBundle:User')->findOneBy(array(
+		$user = $this->manager->getRepository('BackendBundle:Users')->findOneBy(array(
             'email' => $email,
 				'password' =>$password
 			));
-		$rolesXuser = $this->manager->getRepository('BackendBundle:RolesXUser')->findOneBy(array(
-				'userid' => $user->getId()
-			));
 
-		$permisos = $this->manager->getRepository('BackendBundle:PermisosXRol')->findBy(array(
-				'idRol' => $rolesXuser->getRolid()->getRolId()
-			));
-
-		//var_dump($rolesXuser->getRolid()->getDescRol()); //saco el rol;
-		//var_dump($rolesXuser->getUserid()->getEmail()); //saco el nombre
-		$accesos = array();
-
-
-        foreach ($permisos as $iValue) {
-            $accesos[] = $iValue->getIdPermiso()->getDescripPermiso();
-        }
 		//var_dump($accesos);
 		//$pepe1 = 'rolid:'.$roles->getRolid()->getRolId();
 		//$pepe = $permisos->getIdPermiso();
@@ -46,6 +31,25 @@ class JwtAuth{
 		$signup = false;
 		if(is_object($user)){
 			$signup = true;
+
+            $rolesXuser = $this->manager->getRepository('BackendBundle:RolesXUser')->findOneBy(array(
+                'userid' => $user->getId()
+            ));
+
+            $permisos = $this->manager->getRepository('BackendBundle:PermisosXRol')->findBy(array(
+                'idRol' => $rolesXuser->getRolid()->getRolId()
+            ));
+
+            //var_dump($rolesXuser->getRolid()->getDescRol()); //saco el rol;
+            //var_dump($rolesXuser->getUserid()->getEmail()); //saco el nombre
+            $accesos = array();
+
+
+            foreach ($permisos as $iValue) {
+                $accesos[] = $iValue->getIdPermiso()->getDescripPermiso();
+            }
+
+
 		}
 
 		if($signup == true){

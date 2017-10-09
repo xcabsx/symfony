@@ -1,0 +1,65 @@
+BackendBundle\Entity\RolPermisoAplicacion:
+    type: entity
+    table: rol_permiso_aplicacion
+    indexes:
+        rol_permiso_aplicacion_roles_rol_id_fk:
+            columns:
+                - idrol
+        rol_permiso_aplicacion_permisos_id_permiso_fk:
+            columns:
+                - idpermiso
+        rol_permiso_aplicacion_aplicacion_idapll_fk:
+            columns:
+                - idaplicacion
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        fechaCreacion:
+            type: datetime
+            nullable: true
+            column: fecha_creacion
+        fechaModificacion:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+            column: fecha_modificacion
+    manyToOne:
+        idaplicacion:
+            targetEntity: Aplicacion
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idaplicacion:
+                    referencedColumnName: idapll
+            orphanRemoval: false
+        idpermiso:
+            targetEntity: Permisos
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idpermiso:
+                    referencedColumnName: id_permiso
+            orphanRemoval: false
+        idrol:
+            targetEntity: Roles
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idrol:
+                    referencedColumnName: rol_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

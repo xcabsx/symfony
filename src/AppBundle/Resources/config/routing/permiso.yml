@@ -32,3 +32,8 @@ permiso_editPxR:
     path: /editPxR/{id}
     defaults: { _controller: "AppBundle:Permisos:newPxR"}
     methods: POST
+
+permiso_newRxUxA:
+    path: /newRxUxA
+    defaults: { _controller: "AppBundle:Permisos:newRxUxA"}
+    methods: POST

@@ -52,4 +52,3 @@ class Modulo
         return $this->descripModulo;
     }
 }
-

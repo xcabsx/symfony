@@ -2,12 +2,12 @@ BackendBundle\Entity\UsuarioXPermiso:
     type: entity
     table: usuario_x_permiso
     indexes:
-        usuario_x_permiso_users_Id_fk:
-            columns:
-                - id_usuario
         usuario_x_permiso_permisos_id_permiso_fk:
             columns:
                 - id_permiso
+        usuario_x_permiso_users_Id_fk:
+            columns:
+                - id_usuario
     id:
         id:
             type: integer

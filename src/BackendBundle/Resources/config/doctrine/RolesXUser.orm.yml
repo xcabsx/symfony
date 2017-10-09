@@ -2,12 +2,12 @@ BackendBundle\Entity\RolesXUser:
     type: entity
     table: roles_x_user
     indexes:
-        user_rol_users_Id_fk:
-            columns:
-                - userId
         user_rol_roles_rol_id_fk:
             columns:
                 - rolId
+        user_rol_users_Id_fk:
+            columns:
+                - userId
     id:
         id:
             type: integer
@@ -29,7 +29,7 @@ BackendBundle\Entity\RolesXUser:
                     referencedColumnName: rol_id
             orphanRemoval: false
         userid:
-            targetEntity: User
+            targetEntity: Users
             cascade: {  }
             fetch: LAZY
             mappedBy: null

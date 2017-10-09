@@ -2,6 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use BackendBundle\Entity\Roles;
+use BackendBundle\Entity\RolesXUser;
+use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,11 +12,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints as Assert;
 use AppBundle\Services\Helpers;
 use AppBundle\Services\JwtAuth;
-use BackendBundle\Entity\User;
+use BackendBundle\Entity\Users;
 
 
 class UserController extends Controller{
 
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function newAction(Request $request){
     	$helpers = $this->get(Helpers::class);
         
@@ -34,33 +41,48 @@ class UserController extends Controller{
         	$name = (isset($params->name)) ? $params->name : null;
         	$surname = (isset($params->surname)) ? $params->surname : null;
         	$password = (isset($params->password)) ? $params->password : null;
+        	$estado = 'Activo';
 
         	$emailConstraint = new Assert\Email;
         	$emailConstraint->message = "Email no valido";
         	$validate_email = $this->get("validator")->validate($email,$emailConstraint);
 
-        	if($email != null && count($validate_email)==0 && $password != null && $name != null && $surname != null ){
-        		
-        		$user = new User();
-        			$user->setCreatedAt($createdAt);
-        			$user->setRole($role);
-        			$user->setName($name);
-        			$user->setSurname($surname);
-        			$user->setEmail($email);
-        			
+            if($email != null && count($validate_email)==0 && $password != null && $name != null && $surname != null ){
 
-        			//cifrer contraseña
-        			$pwd = hash('sha256',$password);
-        			$user->setPassword($pwd);
+                /** @var Users usuario a grabar o modificar  */
+                $user = new Users();
+        		$user->setCreatedAt($createdAt);
+        		$user->setRole($role);
+        		$user->setName($name);
+        		$user->setSurname($surname);
+        		$user->setEmail($email);
+                $user->setEstado($estado);
 
 
-        			$em = $this->getDoctrine()->getManager();/*manager para hacer consultas a la base*/
-        			$isset_user = $em->getRepository('BackendBundle:User')->findBy(array(
+                /** @var string Password cifrado con sha256 */
+                $pwd = hash('sha256',$password);
+                $user->setPassword($pwd);
+
+
+                /** @var EntityManager Entity manager de doctrine */
+                $em = $this->getDoctrine()->getManager();
+                /** @var Roles Traigo el rol Nuevo, que es el rol base para cada usuario nuevo. */
+                $rolNuevo = $em->getRepository('BackendBundle:Roles')->findOneBy(array(
+                    "descRol"=>'Nuevo'
+                ));
+                /** @var RolesXUser instancia de rolesXusuario para otorgar el rol "Nuevo" al usuario a grabar. */
+                $rolesXuser = new RolesXUser();
+
+                /** @var Users Comprueba si hay algun usuario en la base con ese email */
+                $isset_user = $em->getRepository('BackendBundle:Users')->findBy(array(
         				"email"=>$email
         				));
-        			/*busqueda en la base por email.*/
 
         			if(count($isset_user) == 0){
+        			    $rolesXuser->setRolid($rolNuevo);
+        			    $rolesXuser->setUserid($user);
+
+        			    $em->persist($rolesXuser);
         				$em->persist($user);
         				$em->flush();
 
@@ -103,7 +125,7 @@ class UserController extends Controller{
 				$identity = $jwt_auth->checkToken($token, true);
 
 				//buscar usuario logeado en la base
-				$user = $em->getRepository('BackendBundle:User')->findOneBy(array(
+				$user = $em->getRepository('BackendBundle:Users')->findOneBy(array(
 					'id'=> $identity->sub
 					));
 
@@ -147,7 +169,7 @@ class UserController extends Controller{
         					$user->setPassword($pwd);
         					}
 		        			
-		        			$isset_user = $em->getRepository('BackendBundle:User')->findBy(array(
+		        			$isset_user = $em->getRepository('BackendBundle:Users')->findBy(array(
 		        				"email"=>$email
 		        				));
 		        			/*busqueda en la base por email.*/
