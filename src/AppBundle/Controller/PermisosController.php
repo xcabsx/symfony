@@ -676,13 +676,13 @@ class PermisosController extends Controller
                             $activo= 'OK';
 
                             if($activo === 'OK') {
-                                $em->persist($rolXpermisoXapl); 
+                                $em->persist($rolXusuarioXapl);
                                 $em->flush();
 
                                 $data= array(
                                     "status"=>"success",
                                     "code"=>200,
-                                    "data"=>$rolXpermisoXapl
+                                    "data"=>$rolXusuarioXapl
                                 );
                             }else{
                                 $data= array(
