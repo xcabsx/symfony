@@ -7,6 +7,7 @@ use AppBundle\Services\JwtAuth;
 use BackendBundle\Entity\Permisos;
 use BackendBundle\Entity\PermisosXRol;
 use BackendBundle\Entity\Roles;
+use BackendBundle\Entity\RolesXUser;
 use BackendBundle\Entity\RolPermisoAplicacion;
 use BackendBundle\Entity\RolXUsuarioXAplicacion;
 use BackendBundle\Entity\User;
@@ -16,6 +17,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\Tests\Service;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
@@ -413,8 +415,8 @@ class PermisosController extends Controller
                 $paramPermisoId = (isset($params->permid)) ? $params->permid: null;
                 /** @var string Parametro id de Rol */
                 $paramRolId = (isset($params->rolid)) ? $params->rolid: null;
-                /** @var string Parametro de id de aplicacion */
-                $aplicaionId = (isset($params->aplid)) ? $params->aplid: null;
+
+                //$aplicaionId = (isset($params->aplid)) ? $params->aplid: null;
 
                 /**
                  * Si tiene acceso se ejecuta el Alta o Modificacion.
@@ -427,14 +429,13 @@ class PermisosController extends Controller
                      * sino Error
                      */
 
-                    if($userId != null && $paramPermisoId != null && $paramRolId && $aplicaionId){
+                    if($userId != null && $paramPermisoId != null && $paramRolId ){
+
+                        // @todo buscar repetidos.
 
                         /** @var EntityManager Instancia el entity manager */
                         $em = $this->getDoctrine()->getManager();
 
-                        $aplicacion = $em->getRepository('BackendBundle:Aplicacion')->findOneBy(array(
-                            "idapll"=>$aplicaionId
-                        ));
                         $permisos = $em->getRepository('BackendBundle:Permisos')->findOneBy(array(
                             "idPermiso"=> $paramPermisoId
                         ));
@@ -443,7 +444,7 @@ class PermisosController extends Controller
                         ));
                         $permisosXrol = new PermisosXRol();
 
-                        $rolXpermisoXapl = new RolPermisoAplicacion();
+                       // $rolXpermisoXapl = new RolPermisoAplicacion();
 
 
                         /**
@@ -455,31 +456,32 @@ class PermisosController extends Controller
                              * agrega los IDs al objeto.
                              * graba el objeto
                              */
-                           /* $permisosXrol->setIdPermiso($permisos);
-                            $permisosXrol->setIdRol($roles);*/
 
-                            $rolXpermisoXapl->setIdaplicacion($aplicacion);
+                           $permisosXrol->setIdPermiso($permisos);
+                           $permisosXrol->setIdRol($roles);
+
+                            /*$rolXpermisoXapl->setIdaplicacion($aplicacion);
                             $rolXpermisoXapl->setIdpermiso($permisos);
                             $rolXpermisoXapl->setIdrol($roles);
-                            $rolXpermisoXapl->setFechaCreacion($createdAt);
+                            $rolXpermisoXapl->setFechaCreacion($createdAt);*/
 
                             /** @var string Controla que los datos pasados esteen marcados como activos @todo Controlar que los 3 tengan estado activo, sino rcar con KO */
                             $activo= 'OK';
 
                             if($activo === 'OK') {
-                                $em->persist($rolXpermisoXapl);
+                                $em->persist($permisosXrol);
                                 $em->flush();
 
                                 $data= array(
                                     "status"=>"success",
                                     "code"=>200,
-                                    "data"=>$rolXpermisoXapl
+                                    "data"=>$permisosXrol
                                 );
                             }else{
                                 $data= array(
                                     "status"=>"Error",
                                     "code"=>200,
-                                    "msg"=>'Permisos , roles o aplicaciones inactivas. no se puede dar de alta'
+                                    "msg"=>'Permisos , roles inactivas. no se puede dar de alta'
                                 );
 
                             }
@@ -490,9 +492,9 @@ class PermisosController extends Controller
                              */
 
                         }else{
-                            /*@todo arreglar para editar lo correcto*/
+
                             $permisosXrol = $em->getRepository('BackendBundle:PermisosXRol')->findOneBy(array(
-                                "id"=> 7
+                                "id"=> $id
                             ));
 
                             $permisosXrol->setIdRol($roles);
@@ -532,7 +534,7 @@ class PermisosController extends Controller
                 $data= array(
                     "status"=>"error",
                     "code"=>400,
-                    "message"=>"tarea no creada, error de parametro"
+                    "message"=>"permiso no creado, error de parametro"
                 );
 
 
@@ -553,6 +555,15 @@ class PermisosController extends Controller
         return $helpers->json($data);
     }
 
+    /**
+     * Funcion para dar de alta o modificar los roles por Usuarios
+     * @param Request $request La peticion con los parametros
+     * @param null $id Parametro Opcional , si existe el ID es una modificacion.
+     * @return $data {
+            "status"=>"status",
+            "code"=> code,
+            "msg / Objeto"=>"msg/objeto"'}
+     */
     public function newRxUxAAction(Request $request, $id = null){
 
 
@@ -622,8 +633,7 @@ class PermisosController extends Controller
                 $paramUserId = (isset($params->userid)) ? $params->userid: null;
                 /** @var string Parametro id de Rol */
                 $paramRolId = (isset($params->rolid)) ? $params->rolid: null;
-                /** @var string Parametro de id de aplicacion */
-                $aplicaionId = (isset($params->aplid)) ? $params->aplid: null;
+
 
                 /**
                  * Si tiene acceso se ejecuta el Alta o Modificacion.
@@ -636,14 +646,11 @@ class PermisosController extends Controller
                      * sino Error
                      */
 
-                    if($userId != null && $paramUserId != null && $paramRolId && $aplicaionId){
+                    if($userId != null && $paramUserId != null && $paramRolId ){
 
                         /** @var EntityManager Instancia el entity manager */
                         $em = $this->getDoctrine()->getManager();
 
-                        $aplicacion = $em->getRepository('BackendBundle:Aplicacion')->findOneBy(array(
-                            "idapll"=>$aplicaionId
-                        ));
                         $usuarios = $em->getRepository('BackendBundle:Users')->findOneBy(array(
                             "id"=> $userId
                         ));
@@ -653,7 +660,7 @@ class PermisosController extends Controller
 
 
                         /** @var RolXUsuarioXAplicacion instancia el objeto a dar de alta o modificar */
-                        $rolXusuarioXapl = new RolXUsuarioXAplicacion();
+                        $rolXusuario = new RolesXUser();
 
 
                         /**
@@ -666,23 +673,21 @@ class PermisosController extends Controller
                              * graba el objeto
                              */
 
-                            $rolXusuarioXapl->setUserid($usuarios);
-                            $rolXusuarioXapl->setRolid($roles);
-                            $rolXusuarioXapl->setAplid($aplicacion);
-                            $rolXusuarioXapl->setEstado('Activo');
-                            $rolXusuarioXapl->setUsuario($userId);
+                            $rolXusuario->setUserid($usuarios);
+                            $rolXusuario->setRolid($roles);
+
 
                             /** @var string Controla que los datos pasados esteen marcados como activos @todo Controlar que los 3 tengan estado activo, sino rcar con KO */
                             $activo= 'OK';
 
                             if($activo === 'OK') {
-                                $em->persist($rolXusuarioXapl);
+                                $em->persist($rolXusuario);
                                 $em->flush();
 
                                 $data= array(
                                     "status"=>"success",
                                     "code"=>200,
-                                    "data"=>$rolXusuarioXapl
+                                    "data"=>$rolXusuario
                                 );
                             }else{
                                 $data= array(
@@ -700,20 +705,20 @@ class PermisosController extends Controller
 
                         }else{
                             /*@todo arreglar para editar lo correcto*/
-                            $permisosXrol = $em->getRepository('BackendBundle:PermisosXRol')->findOneBy(array(
-                                "id"=> 7
+                            $rolXusuario = $em->getRepository('BackendBundle:RolesXUser')->findOneBy(array(
+                                "id"=> $id
                             ));
 
-                            $permisosXrol->setIdRol($roles);
-                            $permisosXrol->setIdPermiso($permisos);
+                            $rolXusuario->setIdRol($roles);
+                            $rolXusuario->setUserid($usuarios);
 
-                            $em->persist($permisosXrol);
+                            $em->persist($rolXusuario);
                             $em->flush();
 
                             $data= array(
                                 "status"=>"success updated",
                                 "code"=>200,
-                                "data"=>$permisosXrol
+                                "data"=>$rolXusuario
                             );
                         }
 

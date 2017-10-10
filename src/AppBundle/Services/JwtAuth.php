@@ -5,6 +5,7 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\DoctrineBundle\ManagerConfigurator;
 use Firebase\JWT\JWT;
 use Doctrine\ORM\Query;
+use stdClass;
 
 class JwtAuth{
 	public $manager;
@@ -16,22 +17,24 @@ class JwtAuth{
 
 	public function signup($email, $password, $getHash = null){
 		
-		$user = $this->manager->getRepository('BackendBundle:Users')->findOneBy(array(
+		$user = $this->manager->getRepository('BackendBundle:User')->findOneBy(array(
             'email' => $email,
-				'password' =>$password
+			'password' =>$password
 			));
 
-		//var_dump($accesos);
-		//$pepe1 = 'rolid:'.$roles->getRolid()->getRolId();
-		//$pepe = $permisos->getIdPermiso();
-		//var_dump($permisos->getIdPermiso()->getDescripPermiso());
-		//var_dump($permisos[3]->getIdPermiso()->getDescripPermiso());
-		/*var_dump($email);
-		var_dump($password);*/
-		$signup = false;
+        /** @var boolean Se carga true cuando el usuario existe en la base. */
+        $signup = false;
+
+        /**
+         *Si $user es Objeto . encontro un usuario en la base con lso parametros pasados.
+         */
 		if(is_object($user)){
 			$signup = true;
 
+            /** @var Object Se buscan los permisos que tenga el usuario .
+             *  @var $user ->getId() string Id de usuario
+             *  @Return  Objeto Con lso permisos por Usuario.
+             */
             $PermisosXuser = $this->manager->getRepository('BackendBundle:UsuarioXPermiso')->findBy(array(
                 'idUsuario' => $user->getId()
             ));
@@ -41,63 +44,46 @@ class JwtAuth{
 
                 $accesosExcepcion[] = $iValue->getIdPermiso()->getDescripPermiso();
             }
-           /* var_dump($accesosExcepcion);
-            die();*/
 
 
-            $rolesXuserxaplic = $this->manager->getRepository('BackendBundle:RolXUsuarioXAplicacion')->findBy(array(
+            $rolesXuser = $this->manager->getRepository('BackendBundle:RolesXUser')->findBy(array(
                 'userid' => $user->getId()
             ));
-
-            foreach ($rolesXuserxaplic as $iValue1) {
-                $roles[] = $iValue1->getRolid()->getDescRol();
-                $rolesIds[] =  $iValue1->getRolid()->getRolId(); // de aca los roles
+            if(!$rolesXuser){
+                $accesos = array();
+                $permisos = array();
             }
 
-            for($i=0, $iMax = count($rolesIds); $i< $iMax; ++$i){
+            foreach ($rolesXuser as $iValue2) {
 
-            $rol = $rolesIds[$i];
-                $rolesXpermXaplication = $this->manager->getRepository('BackendBundle:RolPermisoAplicacion')->findBy(array(
-                    'idrol' => $rolesIds[$i]
-
+               $permisos = $this->manager->getRepository('BackendBundle:PermisosXRol')->findBy(array(
+                    'idRol' => $iValue2->getRolid()->getRolId()
                 ));
-                foreach ($rolesXpermXaplication as $iValue) {
-                    //var_dump($iValue->getIdpermiso()->getDescripPermiso());
-                    $permisoss[] = $iValue->getIdpermiso()->getDescripPermiso();
-
-                }
-
 
             }
+            if(!$permisos ){
 
-            echo "pasa";
-            var_dump($permisoss);
-            //var_dump($rolesXpermXaplication->getRolid()->getDescRol());
-            die();
-
-
-            $permisos = $this->manager->getRepository('BackendBundle:PermisosXRol')->findBy(array(
-                'idRol' => $rolesXuser->getRolid()->getRolId()
-            ));
-
-
-
-            //var_dump($rolesXuser->getRolid()->getDescRol()); //saco el rol;
-            //var_dump($rolesXuser->getUserid()->getEmail()); //saco el nombre
-            $accesos = array();
-
-
-            foreach ($permisos as $iValue) {
-                $accesos[] = $iValue->getIdPermiso()->getDescripPermiso();
+                $accesos = array();
+            }else{
+            foreach ($permisos as $iValue3) {
+                $accesos[] = $iValue3->getIdPermiso()->getDescripPermiso();
             }
-
+            }
 
 		}
-
 		if($signup == true){
 
+            /** @var array el merge de los permisos por rol y los exepcionales */
             $resultado = array_merge($accesosExcepcion, $accesos);
-			//generar token
+
+            /** @var array array de permisos sin duplicados */
+            $resultado2 = array_keys(array_flip($resultado));
+
+
+
+
+            //generar token
+
 			$token = array(
 				'sub' => $user->getId(),
 				'email' => $user->getEmail(),
@@ -105,9 +91,7 @@ class JwtAuth{
 				'surname' => $user->getSurname(),
 				'iat' => time(),
 				'exp' =>time()+(7 * 24 * 60 * 60),
-				'Permisos' =>$resultado
-
-
+				'Permisos' =>$resultado2
 				);
 
 			$jwt = JWT::encode($token,$this->key, 'HS256');
