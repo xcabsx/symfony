@@ -37,3 +37,8 @@ permiso_newRxUxA:
     path: /newRxUxA
     defaults: { _controller: "AppBundle:Permisos:newRxUxA"}
     methods: POST
+
+permiso_roles:
+    path: /roles
+    defaults: { _controller: "AppBundle:Permisos:roles"}
+    methods: POST

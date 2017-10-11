@@ -769,4 +769,54 @@ class PermisosController extends Controller
 
     public function editAction(){
     }
+    public function rolesAction(Request $request){
+        $helpers = $this->get(Helpers::class);
+        $jwt_auth = $this->get(JwtAuth::class);
+
+        //traigo el parametro del post.
+        $token = $request->get('authorization',null);
+        //compruebo que el token sea valido.
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if($authCheck){
+            //identity son los datos decritados del token
+            $identity = $jwt_auth->checkToken($token,true);
+
+            $em = $this->getDoctrine()->getManager();
+
+            $dql = 'SELECT t FROM BackendBundle:Roles t ';
+            $query = $em->createQuery($dql);
+
+            $page = $request->query->getInt('page',1);
+            $paginator = $this->get('knp_paginator');
+            $items_per_page = 10;
+
+            $pagination = $paginator->paginate($query,$page,$items_per_page);
+
+            $total_items_count = $pagination->getTotalItemCount();
+
+            $data= array(
+                "status"=>"success",
+                "code"=>200,
+                "total_items_count"=>$total_items_count,
+                "page_actual"=> $page,
+                "items_per_page"=> $items_per_page,
+                "total_pages"=> ceil($total_items_count / $items_per_page),
+                "data"=>$pagination
+
+            );
+
+        }else{
+            $data= array(
+                "status"=>"Error",
+                "code"=>400,
+                "message"=>"credenciales invalidas"
+
+            );
+
+        }
+
+        return $helpers->json($data);
+
+    }
 }
