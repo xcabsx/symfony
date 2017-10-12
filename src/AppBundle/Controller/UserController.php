@@ -264,6 +264,55 @@ class UserController extends Controller{
         return $helpers->json($data);
 
     }
+    public function userAction(Request $request , $id = null){
+
+        $helpers = $this->get(Helpers::class);
+        $jwt_auth = $this->get(JwtAuth::class);
+        $token = $request->get('authorization',null);
+
+        //compruebo que el token sea valido.
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if($authCheck){
+            $identity = $jwt_auth->checkToken($token,true);
+            $em = $this->getDoctrine()->getManager();
+
+            $User = $em->getRepository('BackendBundle:Users')->findOneBy(array(
+                'id'=>$id
+            ));
+
+            if($User && is_object($User) ){
+
+                $data = array(
+                    "status"=>"success",
+                    "code"=>200,
+                    "data"=>$User
+
+
+                );
+
+
+            }else{
+                $data = array(
+                    "status"=>"Error",
+                    "code"=>404,
+                    "message"=>"Usuario no encontrado"
+                );
+
+            }
+
+        }else{
+
+            $data = array(
+                "status"=>"Error",
+                "code"=>400,
+                "message"=>"fallo autenticacion"
+            );
+        }
+
+        return $helpers->json($data);
+
+    }
 
 }
 
