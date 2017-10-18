@@ -18,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\Tests\Service;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
+use Symfony\Component\Serializer\Encoder\JsonEncode;
 use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
@@ -815,6 +816,263 @@ class PermisosController extends Controller
             );
 
         }
+
+        return $helpers->json($data);
+
+    }
+    public function PerxRolAction(Request $request, $id){
+        $helpers = $this->get(Helpers::class);
+        $jwt_auth = $this->get(JwtAuth::class);
+
+
+        //traigo el parametro del post.
+        $token = $request->get('authorization',null);
+        //compruebo que el token sea valido.
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if($authCheck){
+            //identity son los datos decritados del token
+            $identity = $jwt_auth->checkToken($token,true);
+
+            $em = $this->getDoctrine()->getManager();
+            $PpermisosxRol = $em->getRepository('BackendBundle:PermisosXRol')->findBy(array(
+                "idRol"=>$id
+            ));
+            $rolActivo = $em->getRepository('BackendBundle:Roles')->findOneBy(array(
+                "rolId"=>$id
+            ));
+
+            $rolDescripcion = $rolActivo->getDescRol();
+
+            if($PpermisosxRol){
+            foreach ($PpermisosxRol as $iper) {
+                $idPer =  (string)$iper->getIdPermiso()->getIdPermiso();
+                $descPer = (string)$iper->getIdPermiso()->getDescripPermiso();
+                $estadoPer = (string)$iper->getIdPermiso()->getEstado();
+
+
+                $descPer = print_r($descPer,true);
+                $idPer = print_r($idPer,true);
+
+                $arrayname['id'] = $idPer;
+                $arrayname['permiso'] = $descPer;
+                $arrayname['estado']=$estadoPer;
+
+                $catList[] = $arrayname;
+
+
+                $permisos[] = $iper->getIdPermiso()->getDescripPermiso() ;
+
+                $data= array(
+                    "status"=>"success",
+                    "code"=>200,
+                    "data"=>$catList,
+                    "Rol"=>$rolDescripcion
+
+                );
+            }
+                //$json = $json."]";
+            }else{
+                $data= array(
+                    "status"=>"success",
+                    "code"=>200,
+                    "data"=>null,
+                    "Rol"=>$rolDescripcion
+
+                );
+            }
+
+
+
+          //  echo json_encode($catList);
+
+           // $permJson = $helpers->json($json);
+           // echo json_encode($json);
+
+
+
+        }else{
+            $data= array(
+                "status"=>"Error",
+                "code"=>400,
+                "message"=>"credenciales invalidas"
+
+            );
+
+        }
+
+        return $helpers->json($data);
+
+    }
+    public function RolxUserAction(Request $request, $id){
+        $helpers = $this->get(Helpers::class);
+        $jwt_auth = $this->get(JwtAuth::class);
+
+
+        //traigo el parametro del post.
+        $token = $request->get('authorization',null);
+        //compruebo que el token sea valido.
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if($authCheck){
+            //identity son los datos decritados del token
+            $identity = $jwt_auth->checkToken($token,true);
+
+            $em = $this->getDoctrine()->getManager();
+            $rolxUser = $em->getRepository('BackendBundle:RolesXUser')->findBy(array(
+                "userid"=>$id
+            ));
+            $userActivo = $em->getRepository('BackendBundle:Users')->findOneBy(array(
+                "id"=>$id
+            ));
+
+            $userDescripcion = $userActivo->getName() .' '.$userActivo->getSurname();
+
+            if($rolxUser){
+                foreach ($rolxUser as $iper) {
+                    $idRol =  (string)$iper->getRolid()->getRolId();
+                    $descRol = (string)$iper->getRolid()->getDescRol();
+                    $estadoRol = (string)$iper->getRolid()->getEstado();
+
+
+                    $descRol = print_r($descRol,true);
+                    $idRol = print_r($idRol,true);
+
+                    $arrayname['rolId'] = $idRol;
+                    $arrayname['descRol'] = $descRol;
+                    $arrayname['estado']=$estadoRol;
+
+                    $catList[] = $arrayname;
+
+
+                    $data= array(
+                        "status"=>"success",
+                        "code"=>200,
+                        "data"=>$catList,
+
+
+                    );
+                }
+                //$json = $json."]";
+            }else{
+                $data= array(
+                    "status"=>"success",
+                    "code"=>200,
+                    "data"=>null,
+
+
+                );
+            }
+
+
+
+            //  echo json_encode($catList);
+
+            // $permJson = $helpers->json($json);
+            // echo json_encode($json);
+
+
+
+        }else{
+            $data= array(
+                "status"=>"Error",
+                "code"=>400,
+                "message"=>"credenciales invalidas"
+
+            );
+
+        }
+
+        return $helpers->json($data);
+
+    }
+
+    /**
+     * Funcion para marcar un rol como Inactivo
+     * @param string $uId Id de usuario Opcional en el request. para quitar el rol al usuario
+     * @param string $id id de Rol para Inhabilitar o quitar del usuario
+     * @return $data {
+            "status"=>"status",
+            "code"=> code,
+            "msg / Objeto"=>"msg/objeto"'}
+     */
+    public function EliminarRolAction(Request $request, $id){
+        $helpers = $this->get(Helpers::class);
+        $jwt_auth = $this->get(JwtAuth::class);
+
+
+        //traigo el parametro del post.
+        $token = $request->get('authorization',null);
+        $idUser = $request->get('uId',null);
+        //compruebo que el token sea valido. @todo comprobar que sea Admin
+        $authCheck = $jwt_auth->checkToken($token);
+
+
+
+        if($authCheck){
+            //identity son los datos decritados del token
+            $identity = $jwt_auth->checkToken($token,true);
+
+
+            $em = $this->getDoctrine()->getManager();
+
+         if($idUser){
+             //aca borraria la relacion entre el usuario y el rol.
+             $rolxUser1 = $em->getRepository('BackendBundle:RolesXUser')->findOneBy(array(
+                 "userid"=>$idUser,
+                 "rolid"=>$id
+             ));
+
+             $em->remove($rolxUser1);
+             $em->flush();
+
+             $data = array(
+                 "status"=>"success",
+                 "code"=>200,
+                 "data"=>$rolxUser1);
+
+
+
+         }else{
+             //aca va el update a inactivo
+
+
+             $role = $em->getRepository('BackendBundle:Roles')->findOneBy(array(
+                 "rolId" => $id
+             ));
+
+             $esatdoActual = $role->getEstado();
+
+             if($esatdoActual==='Inactivo'){
+                 $role->setEstado("Activo");
+             }else{
+                 $role->setEstado("Inactivo");
+             }
+
+
+             $em->flush();
+
+                 $data = array(
+                     "status" => "success",
+                     "code" => 200,
+                     "data" => $role,
+
+
+                 );
+
+
+
+         }
+        }else{
+            $data= array(
+                "status"=>"Error",
+                "code"=>400,
+                "message"=>"credenciales invalidas"
+
+            );
+
+        }
+
 
         return $helpers->json($data);
 

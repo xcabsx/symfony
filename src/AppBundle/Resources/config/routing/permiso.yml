@@ -42,3 +42,18 @@ permiso_roles:
     path: /roles
     defaults: { _controller: "AppBundle:Permisos:roles"}
     methods: POST
+
+permiso_perxrol:
+    path: /PxR/{id}
+    defaults: { _controller: "AppBundle:Permisos:PerxRol", id:null}
+    methods: POST
+
+permiso_rolxuser:
+    path: /RxU/{id}
+    defaults: { _controller: "AppBundle:Permisos:RolxUser", id:null}
+    methods: POST
+
+permiso_deleteRol:
+    path: /DelRol/{id}
+    defaults: { _controller: "AppBundle:Permisos:EliminarRol", id:null}
+    methods: POST
