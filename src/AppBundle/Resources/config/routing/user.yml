@@ -13,6 +13,11 @@ user_list:
     defaults: { _controller: "AppBundle:User:users"}
     methods: POST
 
+user_lists:
+    path: /list/
+    defaults: { _controller: "AppBundle:User:users"}
+    methods: POST
+
 user_detail:
     path: /user/{id}
     defaults: { _controller: "AppBundle:User:user", id:null}

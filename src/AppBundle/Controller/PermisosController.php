@@ -649,11 +649,13 @@ class PermisosController extends Controller
 
                     if($userId != null && $paramUserId != null && $paramRolId ){
 
+
+
                         /** @var EntityManager Instancia el entity manager */
                         $em = $this->getDoctrine()->getManager();
 
                         $usuarios = $em->getRepository('BackendBundle:Users')->findOneBy(array(
-                            "id"=> $userId
+                            "id"=> $paramUserId
                         ));
                         $roles = $em->getRepository('BackendBundle:Roles')->findOneBy(array(
                             "rolId"=> $paramRolId
@@ -949,6 +951,110 @@ class PermisosController extends Controller
                         "status"=>"success",
                         "code"=>200,
                         "data"=>$catList,
+
+
+                    );
+                }
+                //$json = $json."]";
+            }else{
+                $data= array(
+                    "status"=>"success",
+                    "code"=>200,
+                    "data"=>null,
+
+
+                );
+            }
+
+
+
+            //  echo json_encode($catList);
+
+            // $permJson = $helpers->json($json);
+            // echo json_encode($json);
+
+
+
+        }else{
+            $data= array(
+                "status"=>"Error",
+                "code"=>400,
+                "message"=>"credenciales invalidas"
+
+            );
+
+        }
+
+        return $helpers->json($data);
+
+    }
+    public function UserxRolAction(Request $request, $id){
+        $helpers = $this->get(Helpers::class);
+        $jwt_auth = $this->get(JwtAuth::class);
+
+
+        //traigo el parametro del post.
+        $token = $request->get('authorization',null);
+        //compruebo que el token sea valido.
+        $authCheck = $jwt_auth->checkToken($token);
+
+        if($authCheck){
+            //identity son los datos decritados del token
+            $identity = $jwt_auth->checkToken($token,true);
+
+            $em = $this->getDoctrine()->getManager();
+            $rolxUser = $em->getRepository('BackendBundle:RolesXUser')->findBy(array(
+                "rolid"=>$id
+            ));
+
+            $Users = $em->getRepository('BackendBundle:Users')->findall();
+
+            $rolActivo = $em->getRepository('BackendBundle:Roles')->findOneBy(array(
+                "rolId"=>$id
+            ));
+            $descripcionRol = $rolActivo->getDescRol();
+
+
+
+            if($rolxUser){
+                foreach ($rolxUser as $iper) {
+
+                    $idUser = (string)$iper->getUserid()->getId();
+                    $idUserName = (string)$iper->getUserid()->getName();
+                    $idUserSurName = (string)$iper->getUserid()->getSurname();
+                    $idUserEmail = (string)$iper->getUserid()->getEmail();
+
+                    foreach ($Users as $iper2) {
+                        $idUsuario = $iper2->getId();
+                        if ($idUsuario == $idUser) {
+
+                            $iper2->setRole('OK');
+                            $pepe = $iper2->getRole();
+                            }
+                    }
+
+                    $idUser = print_r($idUser,true);
+                    $idUserName = print_r($idUserName,true);
+                    $idUserSurName = print_r($idUserSurName,true);
+
+
+
+                    $arrayUsers['id']=$idUser;
+                    $arrayUsers['name']=$idUserName;
+                    $arrayUsers['surname']=$idUserSurName;
+                    $arrayUsers['email']=$idUserEmail;
+
+
+                    $catList[] = $arrayUsers;
+
+
+
+                    $data= array(
+                        "status"=>"success",
+                        "code"=>200,
+                        "data"=>$catList,
+                        "users"=>$Users,
+                        'rol' =>$descripcionRol
 
 
                     );
