@@ -343,8 +343,8 @@ class PermisosController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param null $id
+     * funcion para vincular un permiso con un rol
+     * @param null $id Si == null Da de alta un nuevo permiso. sino Edita el pasado por ID
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function newPxRAction(Request $request, $id = null){
@@ -988,6 +988,17 @@ class PermisosController extends Controller
         return $helpers->json($data);
 
     }
+
+    /**
+     * Funcion para traer una lista de usuarios por rol
+     * @param string $id Id del rol a traer los usuarios
+     * @return $data {
+        "status"=>"status",
+        "code"=> code,
+        "data"=>"{"id","name","surname","email"}'}
+        "users"=> todos los usuarios.
+        "rol"=> 'Descripcion del rol en cuestion'
+     */
     public function UserxRolAction(Request $request, $id){
         $helpers = $this->get(Helpers::class);
         $jwt_auth = $this->get(JwtAuth::class);
@@ -1065,6 +1076,8 @@ class PermisosController extends Controller
                     "status"=>"success",
                     "code"=>200,
                     "data"=>null,
+                    "users"=>$Users,
+                    'rol'=>$descripcionRol
 
 
                 );

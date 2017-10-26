@@ -314,6 +314,89 @@ class UserController extends Controller{
 
     }
 
+    public function EliminarUserAction(Request $request, $id){
+        $helpers = $this->get(Helpers::class);
+        $jwt_auth = $this->get(JwtAuth::class);
+
+
+        //traigo el parametro del post.
+        $token = $request->get('authorization',null);
+        $idUser = $request->get('uId',null);
+        // aca se puede poner los deletes de las relaciones mandando el id de la relacion a borrar
+        //compruebo que el token sea valido. @todo comprobar que sea Admin
+        $authCheck = $jwt_auth->checkToken($token);
+
+
+
+        if($authCheck){
+            //identity son los datos decritados del token
+            $identity = $jwt_auth->checkToken($token,true);
+
+
+            $em = $this->getDoctrine()->getManager();
+
+            if($idUser=== 'pepe'){
+                //no mando id! error.
+                $rolxUser1 = $em->getRepository('BackendBundle:RolesXUser')->findOneBy(array(
+                    "userid"=>$idUser,
+                    "rolid"=>$id
+                ));
+
+                $em->remove($rolxUser1);
+                $em->flush();
+
+                $data = array(
+                    "status"=>"success",
+                    "code"=>200,
+                    "data"=>$rolxUser1);
+
+
+
+            }else{
+                //aca va el update a inactivo
+
+
+                $user = $em->getRepository('BackendBundle:Users')->findOneBy(array(
+                    "id" => $id
+                ));
+
+                $esatdoActual = $user->getEstado();
+
+                if($esatdoActual==='Inactivo'){
+                    $user->setEstado("Activo");
+                }else{
+                    $user->setEstado("Inactivo");
+                }
+
+
+                $em->flush();
+
+                $data = array(
+                    "status" => "success",
+                    "code" => 200,
+                    "data" => $user,
+
+
+                );
+
+
+
+            }
+        }else{
+            $data= array(
+                "status"=>"Error",
+                "code"=>400,
+                "message"=>"credenciales invalidas"
+
+            );
+
+        }
+
+
+        return $helpers->json($data);
+
+    }
+
 }
 
 

@@ -22,3 +22,8 @@ user_detail:
     path: /user/{id}
     defaults: { _controller: "AppBundle:User:user", id:null}
     methods: POST
+
+user_delete:
+    path: /del/{id}
+    defaults: { _controller: "AppBundle:User:EliminarUser", id:null}
+    methods: POST
