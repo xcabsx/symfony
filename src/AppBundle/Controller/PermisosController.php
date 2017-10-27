@@ -936,6 +936,8 @@ class PermisosController extends Controller
                     $descRol = (string)$iper->getRolid()->getDescRol();
                     $estadoRol = (string)$iper->getRolid()->getEstado();
 
+                    if($estadoRol === 'Activo'){
+
 
                     $descRol = print_r($descRol,true);
                     $idRol = print_r($idRol,true);
@@ -954,7 +956,18 @@ class PermisosController extends Controller
 
 
                     );
+                    }else{
+                        $data= array(
+                            "status"=>"success",
+                            "code"=>200,
+                            "data"=>null,
+
+
+                        );
+
+                    }
                 }
+
                 //$json = $json."]";
             }else{
                 $data= array(
@@ -1018,12 +1031,15 @@ class PermisosController extends Controller
                 "rolid"=>$id
             ));
 
-            $Users = $em->getRepository('BackendBundle:Users')->findall();
+            $Users = $em->getRepository('BackendBundle:Users')->findBy(array(
+                'estado'=>'Activo'
+            ));
 
             $rolActivo = $em->getRepository('BackendBundle:Roles')->findOneBy(array(
                 "rolId"=>$id
             ));
             $descripcionRol = $rolActivo->getDescRol();
+            $estadoRol = $rolActivo->getEstado();
 
 
 
@@ -1034,6 +1050,8 @@ class PermisosController extends Controller
                     $idUserName = (string)$iper->getUserid()->getName();
                     $idUserSurName = (string)$iper->getUserid()->getSurname();
                     $idUserEmail = (string)$iper->getUserid()->getEmail();
+                    $idUserestado = (string)$iper->getUserid()->getEstado();
+                    if($idUserestado === 'Activo' && $estadoRol === 'Activo'){
 
                     foreach ($Users as $iper2) {
                         $idUsuario = $iper2->getId();
@@ -1054,6 +1072,7 @@ class PermisosController extends Controller
                     $arrayUsers['name']=$idUserName;
                     $arrayUsers['surname']=$idUserSurName;
                     $arrayUsers['email']=$idUserEmail;
+                    $arrayUsers['estado']=$idUserestado;
 
 
                     $catList[] = $arrayUsers;
@@ -1069,6 +1088,23 @@ class PermisosController extends Controller
 
 
                     );
+                }else{
+                        if(isset($catList)){
+
+                        }else{
+                            $catList = null;
+                        }
+                        $data= array(
+                            "status"=>"success",
+                            "code"=>200,
+                            "data"=>$catList,
+                            "users"=>$Users,
+                            'rol' =>$descripcionRol
+
+
+                        );
+
+                    }
                 }
                 //$json = $json."]";
             }else{
