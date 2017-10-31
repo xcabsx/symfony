@@ -52,15 +52,25 @@ class JwtAuth{
             if(!$rolesXuser){
                 $accesos = array();
                 $permisos = array();
-            }
-
+                $roles = array();
+            }else{
             foreach ($rolesXuser as $iValue2) {
 
                $permisos = $this->manager->getRepository('BackendBundle:PermisosXRol')->findBy(array(
                     'idRol' => $iValue2->getRolid()->getRolId()
                 ));
+               $aplicaciones =  $this->manager->getRepository('BackendBundle:AplicacionXRol')->findBy(array(
+                    'idrol' => $iValue2->getRolid()->getRolId()
+                ));
+               $roles[] = $iValue2->getRolid()->getDescRol();
+
 
             }
+
+
+
+            }
+
             if(!$permisos ){
 
                 $accesos = array();
@@ -69,6 +79,17 @@ class JwtAuth{
                 $accesos[] = $iValue3->getIdPermiso()->getDescripPermiso();
             }
             }
+
+            if(!$aplicaciones ){
+
+                $apls = array();
+            }else{
+                foreach ($aplicaciones as $iValue4) {
+                    $apls[] = $iValue4->getIdapl()->getDescripcionApl();
+                }
+            }
+
+
 
 		}
 		if($signup == true){
@@ -91,7 +112,8 @@ class JwtAuth{
 				'surname' => $user->getSurname(),
 				'iat' => time(),
 				'exp' =>time()+(7 * 24 * 60 * 60),
-				'Permisos' =>$resultado2
+				'Permisos' =>$resultado2,
+                'Apls'=>$apls
 				);
 
 			$jwt = JWT::encode($token,$this->key, 'HS256');

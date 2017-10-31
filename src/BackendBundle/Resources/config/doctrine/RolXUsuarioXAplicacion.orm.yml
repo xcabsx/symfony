@@ -2,15 +2,15 @@ BackendBundle\Entity\RolXUsuarioXAplicacion:
     type: entity
     table: rol_x_usuario_x_aplicacion
     indexes:
+        rol_x_usuario_x_aplicacion_aplicacion_idapll_fk:
+            columns:
+                - aplid
         rol_x_usuario_x_aplicacion_roles_rol_id_fk:
             columns:
                 - rolid
         rol_x_usuario_x_aplicacion_users_Id_fk:
             columns:
                 - userid
-        rol_x_usuario_x_aplicacion_aplicacion_idapll_fk:
-            columns:
-                - aplid
     id:
         id:
             type: integer

@@ -197,4 +197,3 @@ class RolXUsuarioXAplicacion
         return $this->userid;
     }
 }
-

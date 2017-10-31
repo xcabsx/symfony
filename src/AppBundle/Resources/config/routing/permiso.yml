@@ -62,3 +62,23 @@ permiso_deleteRol:
     path: /DelRol/{id}
     defaults: { _controller: "AppBundle:Permisos:EliminarRol", id:null}
     methods: POST
+
+permiso_login:
+    path: /control
+    defaults: { _controller: "AppBundle:Permisos:ControlLogin"}
+    methods: POST
+
+permiso_controlPerm:
+    path: /contrperm
+    defaults: { _controller: "AppBundle:Permisos:ControlPermisos"}
+    methods: POST
+
+permiso_aplicaciones:
+    path: /apls
+    defaults: { _controller: "AppBundle:Permisos:aplicaciones"}
+    methods: POST
+
+permiso_newRxA:
+    path: /newRxApl
+    defaults: { _controller: "AppBundle:Permisos:newRxApl"}
+    methods: POST

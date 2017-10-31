@@ -2,15 +2,15 @@ BackendBundle\Entity\RolPermisoAplicacion:
     type: entity
     table: rol_permiso_aplicacion
     indexes:
-        rol_permiso_aplicacion_roles_rol_id_fk:
-            columns:
-                - idrol
-        rol_permiso_aplicacion_permisos_id_permiso_fk:
-            columns:
-                - idpermiso
         rol_permiso_aplicacion_aplicacion_idapll_fk:
             columns:
                 - idaplicacion
+        rol_permiso_aplicacion_permisos_id_permiso_fk:
+            columns:
+                - idpermiso
+        rol_permiso_aplicacion_roles_rol_id_fk:
+            columns:
+                - idrol
     id:
         id:
             type: integer
