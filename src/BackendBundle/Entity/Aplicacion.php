@@ -109,4 +109,33 @@ class Aplicacion
     {
         return $this->estado;
     }
+    /**
+     * @var string
+     */
+    private $temp;
+
+
+    /**
+     * Set temp
+     *
+     * @param string $temp
+     *
+     * @return Aplicacion
+     */
+    public function setTemp($temp)
+    {
+        $this->temp = $temp;
+
+        return $this;
+    }
+
+    /**
+     * Get temp
+     *
+     * @return string
+     */
+    public function getTemp()
+    {
+        return $this->temp;
+    }
 }

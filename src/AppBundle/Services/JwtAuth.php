@@ -80,7 +80,7 @@ class JwtAuth{
             }
             }
 
-            if(!$aplicaciones ){
+            if(!isset($aplicaciones) ){
 
                 $apls = array();
             }else{

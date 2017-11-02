@@ -110,4 +110,3 @@ class AplicacionXRol
         return $this->idrol;
     }
 }
-

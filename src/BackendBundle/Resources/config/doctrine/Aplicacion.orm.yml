@@ -28,4 +28,11 @@ BackendBundle\Entity\Aplicacion:
             length: 10
             options:
                 fixed: false
+        temp:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+            column: Temp
     lifecycleCallbacks: {  }
