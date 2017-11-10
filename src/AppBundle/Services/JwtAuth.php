@@ -56,10 +56,12 @@ class JwtAuth{
             }else{
             foreach ($rolesXuser as $iValue2) {
 
-               $permisos = $this->manager->getRepository('BackendBundle:PermisosXRol')->findBy(array(
+
+               $permisos[] = $this->manager->getRepository('BackendBundle:PermisosXRol')->findBy(array(
                     'idRol' => $iValue2->getRolid()->getRolId()
                 ));
-               $aplicaciones =  $this->manager->getRepository('BackendBundle:AplicacionXRol')->findBy(array(
+
+               $aplicaciones[] =  $this->manager->getRepository('BackendBundle:AplicacionXRol')->findBy(array(
                     'idrol' => $iValue2->getRolid()->getRolId()
                 ));
                $roles[] = $iValue2->getRolid()->getDescRol();
@@ -68,24 +70,33 @@ class JwtAuth{
             }
 
 
+// hacer q funcione con varios roles.... desde aca
+
 
             }
+            //var_dump($accesos);
+            //die();
 
             if(!$permisos ){
 
                 $accesos = array();
             }else{
-            foreach ($permisos as $iValue3) {
-                $accesos[] = $iValue3->getIdPermiso()->getDescripPermiso();
-            }
+                foreach ($permisos as $ipermis) {
+                    foreach ($ipermis as $pepe){
+                        $accesos[] = $pepe->getIdPermiso()->getDescripPermiso();
+                    }
+                }
             }
 
             if(!isset($aplicaciones) ){
 
                 $apls = array();
             }else{
-                foreach ($aplicaciones as $iValue4) {
-                    $apls[] = $iValue4->getIdapl()->getDescripcionApl();
+                foreach ($aplicaciones as $iapliss) {
+                   foreach ($iapliss as $ppe){
+                        $apls[] = $ppe->getIdapl()->getDescripcionApl();
+                    }
+
                 }
             }
 

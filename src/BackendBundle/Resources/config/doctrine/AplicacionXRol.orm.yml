@@ -1,0 +1,48 @@
+BackendBundle\Entity\AplicacionXRol:
+    type: entity
+    table: aplicacion_x_rol
+    indexes:
+        aplicacion_x_rol_aplicacion_idapll_fk:
+            columns:
+                - idapl
+        aplicacion_x_rol_roles_rol_id_fk:
+            columns:
+                - idrol
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        estado:
+            type: string
+            nullable: true
+            length: 50
+            options:
+                fixed: false
+    manyToOne:
+        idapl:
+            targetEntity: Aplicacion
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idapl:
+                    referencedColumnName: idapll
+            orphanRemoval: false
+        idrol:
+            targetEntity: Roles
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idrol:
+                    referencedColumnName: rol_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

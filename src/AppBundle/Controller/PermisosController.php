@@ -922,6 +922,7 @@ class PermisosController extends Controller
             //identity son los datos decritados del token
             $identity = $jwt_auth->checkToken($token,true);
 
+
             $em = $this->getDoctrine()->getManager();
             $rolxUser = $em->getRepository('BackendBundle:RolesXUser')->findBy(array(
                 "userid"=>$id
@@ -933,7 +934,9 @@ class PermisosController extends Controller
             $userDescripcion = $userActivo->getName() .' '.$userActivo->getSurname();
 
             if($rolxUser){
+
                 foreach ($rolxUser as $iper) {
+                   
                     $idRol =  (string)$iper->getRolid()->getRolId();
                     $descRol = (string)$iper->getRolid()->getDescRol();
                     $estadoRol = (string)$iper->getRolid()->getEstado();
@@ -958,11 +961,21 @@ class PermisosController extends Controller
 
 
                     );
-                    }else{
+                    }else if(!isset($catList)){
                         $data= array(
                             "status"=>"success",
                             "code"=>200,
                             "data"=>null,
+
+
+                        );
+
+                    }else{
+                        // solo para cuando el ultimo esta anulado
+                        $data= array(
+                            "status"=>"success",
+                            "code"=>200,
+                            "data"=>$catList,
 
 
                         );
@@ -1405,6 +1418,7 @@ class PermisosController extends Controller
                         foreach ($identity->Permisos as $pepe){
                             if($pepe === $descripcionPermiso){
                                 $tieneAcceso = true;
+
                             }
                         }
                     }
@@ -1414,11 +1428,13 @@ class PermisosController extends Controller
                 foreach ($identity->Permisos as $pepe) {
                     if ($pepe === 'Administrador') {
                         $tieneAcceso = true;
+
                     }
                 }
             }
 
             //identity son los datos decritados del token
+
             if($tieneAcceso){
             $data= array(
                 "status"=>"OK",
