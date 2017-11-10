@@ -80,4 +80,62 @@ class PermisosXRol
     {
         return $this->idRol;
     }
+    /**
+     * @var string
+     */
+    private $estado;
+
+    /**
+     * @var string
+     */
+    private $temporal;
+
+
+    /**
+     * Set estado
+     *
+     * @param string $estado
+     *
+     * @return PermisosXRol
+     */
+    public function setEstado($estado)
+    {
+        $this->estado = $estado;
+
+        return $this;
+    }
+
+    /**
+     * Get estado
+     *
+     * @return string
+     */
+    public function getEstado()
+    {
+        return $this->estado;
+    }
+
+    /**
+     * Set temporal
+     *
+     * @param string $temporal
+     *
+     * @return PermisosXRol
+     */
+    public function setTemporal($temporal)
+    {
+        $this->temporal = $temporal;
+
+        return $this;
+    }
+
+    /**
+     * Get temporal
+     *
+     * @return string
+     */
+    public function getTemporal()
+    {
+        return $this->temporal;
+    }
 }

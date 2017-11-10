@@ -17,6 +17,19 @@ BackendBundle\Entity\PermisosXRol:
             id: true
             generator:
                 strategy: IDENTITY
+    fields:
+        estado:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        temporal:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
     manyToOne:
         idPermiso:
             targetEntity: Permisos

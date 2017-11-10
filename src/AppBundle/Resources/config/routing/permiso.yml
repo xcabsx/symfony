@@ -48,6 +48,12 @@ permiso_perxrol:
     defaults: { _controller: "AppBundle:Permisos:PerxRol", id:null}
     methods: POST
 
+permiso_perxrol2:
+    path: /PxR2/{id}
+    defaults: { _controller: "AppBundle:Permisos:PermisosxRol", id:null}
+    methods: POST
+
+
 permiso_rolxuser:
     path: /RxU/{id}
     defaults: { _controller: "AppBundle:Permisos:RolxUser", id:null}
@@ -66,6 +72,11 @@ permiso_deleteRol:
 permiso_deleteapl:
     path: /DelApl/{id}
     defaults: { _controller: "AppBundle:Permisos:EliminarAplicacion", id:null}
+    methods: POST
+
+permiso_deleteperm:
+    path: /DelPerm/{id}
+    defaults: { _controller: "AppBundle:Permisos:EliminarPermisoxRol", id:null}
     methods: POST
 
 permiso_login:

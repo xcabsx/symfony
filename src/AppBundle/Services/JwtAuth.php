@@ -42,7 +42,7 @@ class JwtAuth{
             $accesosExcepcion = array();
             foreach ($PermisosXuser as $iValue) {
 
-                $accesosExcepcion[] = $iValue->getIdPermiso()->getDescripPermiso();
+                $accesosExcepcion[] = $iValue->getIdPermiso()->getNombrePermiso();
             }
 
 
@@ -83,7 +83,7 @@ class JwtAuth{
             }else{
                 foreach ($permisos as $ipermis) {
                     foreach ($ipermis as $pepe){
-                        $accesos[] = $pepe->getIdPermiso()->getDescripPermiso();
+                        $accesos[] = $pepe->getIdPermiso()->getNombrePermiso();
                     }
                 }
             }

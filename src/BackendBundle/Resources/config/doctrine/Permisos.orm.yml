@@ -34,4 +34,11 @@ BackendBundle\Entity\Permisos:
             length: 250
             options:
                 fixed: false
+        nombrePermiso:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+            column: nombre_permiso
     lifecycleCallbacks: {  }

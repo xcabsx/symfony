@@ -143,4 +143,33 @@ class Permisos
     {
         return $this->estado;
     }
+    /**
+     * @var string
+     */
+    private $nombrePermiso;
+
+
+    /**
+     * Set nombrePermiso
+     *
+     * @param string $nombrePermiso
+     *
+     * @return Permisos
+     */
+    public function setNombrePermiso($nombrePermiso)
+    {
+        $this->nombrePermiso = $nombrePermiso;
+
+        return $this;
+    }
+
+    /**
+     * Get nombrePermiso
+     *
+     * @return string
+     */
+    public function getNombrePermiso()
+    {
+        return $this->nombrePermiso;
+    }
 }
