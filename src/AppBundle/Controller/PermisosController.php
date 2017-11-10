@@ -936,48 +936,41 @@ class PermisosController extends Controller
             if($rolxUser){
 
                 foreach ($rolxUser as $iper) {
-                   
+
                     $idRol =  (string)$iper->getRolid()->getRolId();
                     $descRol = (string)$iper->getRolid()->getDescRol();
                     $estadoRol = (string)$iper->getRolid()->getEstado();
 
                     if($estadoRol === 'Activo'){
 
+                            $descRol = print_r($descRol,true);
+                            $idRol = print_r($idRol,true);
 
-                    $descRol = print_r($descRol,true);
-                    $idRol = print_r($idRol,true);
-
-                    $arrayname['rolId'] = $idRol;
-                    $arrayname['descRol'] = $descRol;
-                    $arrayname['estado']=$estadoRol;
-
-                    $catList[] = $arrayname;
+                            $arrayname['rolId'] = $idRol;
+                            $arrayname['descRol'] = $descRol;
+                            $arrayname['estado']=$estadoRol;
+                            $catList[] = $arrayname;
 
 
-                    $data= array(
-                        "status"=>"success",
-                        "code"=>200,
-                        "data"=>$catList,
+                            $data= array(
+                                "status"=>"success",
+                                "code"=>200,
+                                "data"=>$catList
+                            );
 
-
-                    );
-                    }else if(!isset($catList)){
+                    }else if(!isset($catList)){ // si no esta activo y no esta instanciado es el ultimo.
                         $data= array(
                             "status"=>"success",
                             "code"=>200,
-                            "data"=>null,
-
-
+                            "data"=>null
                         );
 
                     }else{
-                        // solo para cuando el ultimo esta anulado
+                        // solo para cuando el ultimo esta anulado para que no mande null.
                         $data= array(
                             "status"=>"success",
                             "code"=>200,
-                            "data"=>$catList,
-
-
+                            "data"=>$catList
                         );
 
                     }
