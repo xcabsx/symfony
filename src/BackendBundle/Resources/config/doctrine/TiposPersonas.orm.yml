@@ -1,0 +1,41 @@
+BackendBundle\Entity\TiposPersonas:
+    type: entity
+    table: tipos_personas
+    uniqueConstraints:
+        tipos_personas_id_uindex:
+            columns:
+                - id
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        descripcion:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        estado:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        temporal:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        promocion:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+    lifecycleCallbacks: {  }

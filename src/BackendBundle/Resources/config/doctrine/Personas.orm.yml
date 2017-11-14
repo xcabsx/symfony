@@ -1,0 +1,77 @@
+BackendBundle\Entity\Personas:
+    type: entity
+    table: personas
+    indexes:
+        personas_tipos_personas_id_fk:
+            columns:
+                - tipo_persona
+    uniqueConstraints:
+        personas_dni_uindex:
+            columns:
+                - dni
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        dni:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+        nombre:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        apellido:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        cuilCuit:
+            type: text
+            nullable: true
+            length: 16777215
+            options:
+                fixed: false
+            column: cuil_cuit
+        fechaNacimiento:
+            type: date
+            nullable: true
+            column: fecha_nacimiento
+        estado:
+            type: string
+            nullable: true
+            length: 50
+            options:
+                fixed: false
+        fechaAlta:
+            type: date
+            nullable: true
+            column: fecha_alta
+        fechaBaja:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+            column: fecha_baja
+    manyToOne:
+        tipoPersona:
+            targetEntity: TiposPersonas
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                tipo_persona:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,84 @@
+BackendBundle\Entity\ContactosXPersona:
+    type: entity
+    table: contactos_x_persona
+    uniqueConstraints:
+        contactos_x_persona_id_persona_uindex:
+            columns:
+                - id_persona
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        telefono1:
+            type: text
+            nullable: true
+            length: 16777215
+            options:
+                fixed: false
+        telefono2:
+            type: text
+            nullable: true
+            length: 16777215
+            options:
+                fixed: false
+            column: 'telefono 2'
+        celular:
+            type: text
+            nullable: true
+            length: 16777215
+            options:
+                fixed: false
+        facebook:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        twiter:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        linkedin:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        instagram:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        email1:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        email2:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+    manyToOne:
+        idPersona:
+            targetEntity: Personas
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                id_persona:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

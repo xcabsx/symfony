@@ -1,0 +1,102 @@
+BackendBundle\Entity\DireccionesXPersonas:
+    type: entity
+    table: direcciones_x_personas
+    indexes:
+        direcciones_x_personas_personas_id_fk:
+            columns:
+                - id_persona
+    uniqueConstraints:
+        direcciones_x_personas_id_uindex:
+            columns:
+                - id
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        pais:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        provincia:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        localidad:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        calle:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        numero:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        casa:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        piso:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        dpto:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        manzana:
+            type: integer
+            nullable: true
+            options:
+                unsigned: false
+        estado:
+            type: string
+            nullable: true
+            length: 100
+            options:
+                fixed: false
+        observaciones:
+            type: string
+            nullable: true
+            length: 250
+            options:
+                fixed: false
+        fechaAlta:
+            type: date
+            nullable: true
+            column: fecha_alta
+        fechaBaja:
+            type: date
+            nullable: true
+            column: fecha_baja
+    manyToOne:
+        idPersona:
+            targetEntity: Personas
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                id_persona:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
