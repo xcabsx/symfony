@@ -1,0 +1,19 @@
+user_new:
+    path: /new
+    defaults: { _controller: "AppBundle:Personas:new"}
+    methods: POST
+
+personas_list:
+    path: /list
+    defaults: { _controller: "AppBundle:Personas:personas"}
+    methods: POST
+
+personas_dir_x_per:
+    path: /DxP/{id}
+    defaults: { _controller: "AppBundle:Personas:DireccionesxPersona", id:null}
+    methods: POST
+
+personas_new_dir_x_per:
+    path: /newDxP/{id}
+    defaults: { _controller: "AppBundle:Personas:NewDireccionesxPersona", id:null}
+    methods: POST

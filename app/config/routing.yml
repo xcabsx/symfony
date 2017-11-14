@@ -13,3 +13,7 @@ app_task:
 app_permiso:
     resource: "@AppBundle/Resources/config/routing/permiso.yml"
     prefix: /perm
+
+app_persona:
+    resource: "@AppBundle/Resources/config/routing/persona.yml"
+    prefix: /pers
