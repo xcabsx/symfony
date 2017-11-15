@@ -44,8 +44,8 @@ BackendBundle\Entity\Personas:
                 fixed: false
             column: cuil_cuit
         fechaNacimiento:
-            type: date
-            nullable: true
+            type: datetime
+            nullable: false
             column: fecha_nacimiento
         estado:
             type: string
@@ -54,8 +54,8 @@ BackendBundle\Entity\Personas:
             options:
                 fixed: false
         fechaAlta:
-            type: date
-            nullable: true
+            type: datetime
+            nullable: false
             column: fecha_alta
         fechaBaja:
             type: integer

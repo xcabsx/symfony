@@ -284,4 +284,3 @@ class Personas
         return $this->tipoPersona;
     }
 }
-

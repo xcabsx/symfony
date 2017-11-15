@@ -313,4 +313,3 @@ class ContactosXPersona
         return $this->idPersona;
     }
 }
-

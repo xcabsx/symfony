@@ -139,4 +139,3 @@ class TiposPersonas
         return $this->promocion;
     }
 }
-

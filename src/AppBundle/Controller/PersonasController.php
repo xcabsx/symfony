@@ -19,6 +19,7 @@ class PersonasController extends Controller
 
         //traigo el parametro del post.
         $token = $request->get('authorization',null);
+        $tp = $request->get('tp');
         //compruebo que el token sea valido.
         $authCheck = $jwt_auth->checkToken($token);
 
@@ -27,9 +28,15 @@ class PersonasController extends Controller
             $identity = $jwt_auth->checkToken($token,true);
 
             $em = $this->getDoctrine()->getManager();
+            $dql = '';
+            if(isset($tp)){
+                $dql = "SELECT t FROM BackendBundle:Personas t where t.tipoPersona = $tp";
+            }else{
+                $dql = "SELECT t FROM BackendBundle:Personas t ";
+            }
 
-            $dql = "SELECT t FROM BackendBundle:Personas t ";
             $query = $em->createQuery($dql);
+
 
             $page = $request->query->getInt('page',1);
             $paginator = $this->get('knp_paginator');

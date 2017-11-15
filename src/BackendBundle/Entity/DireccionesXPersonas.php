@@ -429,4 +429,3 @@ class DireccionesXPersonas
         return $this->idPersona;
     }
 }
-

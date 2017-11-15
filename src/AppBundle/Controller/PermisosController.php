@@ -1627,13 +1627,17 @@ class PermisosController extends Controller
              * tambien controla que el estado del permiso sea Activo.
              */
 
+
             if(isset($permisoid)){
                 $em = $this->getDoctrine()->getManager();
                 $permiso = $em->getRepository('BackendBundle:Permisos')->findOneBy(array(
                     "idPermiso" => $permisoid
                 ));
+
+
                 if($permiso && is_object($permiso)){
-                $descripcionPermiso = $permiso->getDescripPermiso();
+                $descripcionPermiso = $permiso->getNombrePermiso();
+
                 $estadoPermiso = $permiso->getEstado();
                     if($estadoPermiso === 'Activo'){
 
