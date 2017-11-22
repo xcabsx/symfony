@@ -16,11 +16,14 @@ class JwtAuth{
 	}
 
 	public function signup($email, $password, $getHash = null){
+
+
 		
 		$user = $this->manager->getRepository('BackendBundle:User')->findOneBy(array(
             'email' => $email,
 			'password' =>$password
 			));
+
 
         /** @var boolean Se carga true cuando el usuario existe en la base. */
         $signup = false;
@@ -92,10 +95,19 @@ class JwtAuth{
 
                 $apls = array();
             }else{
+
                 foreach ($aplicaciones as $iapliss) {
-                   foreach ($iapliss as $ppe){
-                        $apls[] = $ppe->getIdapl()->getDescripcionApl();
+
+                    if($iapliss){
+                     // aca tiene datos y sigue normal
+                        foreach ($iapliss as $ppe){
+                            $apls[] = $ppe->getIdapl()->getDescripcionApl();
+                        }
+                    }else  {
+                        //aca no tiene un carajo de datos y entonces armo el apls. o da error.
+                        $apls = array();
                     }
+
 
                 }
             }
